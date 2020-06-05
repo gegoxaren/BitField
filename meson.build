@@ -5,7 +5,13 @@ project('bitmap_test', ['c', 'vala'],
                    ],
 )
 
+dependencies = []
 
+dep_glib = dependency ('glib-2.0', required: true)
+dep_gobject = dependency ('gobject-2.0', required: true)
+
+dependencies += [dep_glib, dep_gobject]
 
 subdir('src')
 
+executable ('main', source_files, dependencies: dependencies)

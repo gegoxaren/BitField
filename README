@@ -1,0 +1,16 @@
+/*
+ * The basic concept of a bitmap is to provide some kind of siple storrage of
+ * information, that should not take too much space.
+ *
+ * The basic way of doing this is using something like uint8 or uint16,
+ * which provides us with up to 8 and 16 fields respectivly, with the simplest
+ * field being 1 bit, up to the one-field type having the full 8bit (256 value)
+ * or 16bit (65535 value) to work with in one field.
+ *
+ * When defining a bitmap type you need to consider what fields you need, how
+ * many values each feald sholud have and how they corrolate to your data.
+ *
+ * Lits take the examlpe of a simple game map, where you have information like
+ * if a tile is travelsable or if only cetain
+ *
+ */
