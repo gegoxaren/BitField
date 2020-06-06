@@ -1,15 +1,27 @@
+/* (c) Gustav Hartvigsson 2020
+
+                        Cool Licence 1.0
+
+0) You is granted to copy, redistrubute, modify, redistrubute
+   modified copies of the software, in any shape or form.
+1) You are not obligated to give credit the original author(s) of
+   the sofware, but it would be cool of you if you did.
+2) You are allowed to removed the copyright notice if you want to,
+   it is up to you, but it would be cool if you did not.
+ */
+
 namespace BitField {
   
   private static GLib.Tree<string, Type?> list_of_types;
   
-  private static GLib.Tree<FieldInfo?, uint16> mask_cash;
+  private static GLib.Tree<FieldInfo?, uint16> mask_cache;
   
   void init () {
     list_of_types = new GLib.Tree<string, Type?> ((a, b) => {
       return (GLib.strcmp (a,b));
     });
     
-    mask_cash = new GLib.Tree<FieldInfo?, uint16> ((a, b) => {
+    mask_cache = new GLib.Tree<FieldInfo?, uint16> ((a, b) => {
        return a.compare (b);
     });
   }
@@ -22,10 +34,7 @@ namespace BitField {
     });
   }
   
-  /**
-   * @Return true on error.
-   */
-  public bool add_type (string name, FieldInfo first_field, ...) {
+  static bool add_type_v (string name, FieldInfo first_field, ...) {
     var va = va_list ();
     
     GLib.List<FieldInfo?> lst = new GLib.List<FieldInfo?> ();
@@ -33,6 +42,23 @@ namespace BitField {
     lst.append (first_field);
     for (FieldInfo? fi = va.arg<FieldInfo> (); fi != null;
                                                fi = va.arg<FieldInfo> ()) {
+      lst.append (fi);
+    }
+    
+    FieldInfo[] lst2 = new FieldInfo[lst.length ()];
+    
+    add_type (name, lst2);
+    
+    return false;
+  }
+  
+  /**
+   * @Return true on error.
+   */
+  public bool add_type (string name, FieldInfo[] fields) {
+    GLib.List<FieldInfo?> lst = new GLib.List<FieldInfo?> ();
+    
+    foreach  (FieldInfo fi in fields) {
       lst.append (fi);
     }
     
@@ -47,17 +73,21 @@ namespace BitField {
       var a = lst.nth_data (i); 
       // We valitade the items whilst we are at it.
       if (a.validate ()) {
+        GLib.critical ("Validtion of FieldInfo object failed: (%s)",
+                       a.to_string ());
         return true;
       }
       for (uint8 j = i + 1; i < lst.length (); j++) {
-        var b = lst.nth_data (i);
-        
-        
+        var b = lst.nth_data (j);
+        if (b == null) {
+          break;
+        }
         if (a.overlap (b)) {
-          GLib.critical ("Overlappinng fields in %s: (%s) (%s).\n" +
+          GLib.critical ("Overlappinng fields in \"%s\": (%s) (%s).\n" +
                          "\t Will not add bitmap type defitions.",
-                         lst.nth_data (i).to_string (),
-                         lst.nth_data (j).to_string ());
+                         name,
+                         a.to_string (),
+                         b.to_string ());
           return true;
         }
       }
@@ -68,30 +98,104 @@ namespace BitField {
       t.fields[i] = lst.nth_data (i);
     }
     
+    list_of_types.insert (name, t);
+    
+    // add the masks to the mask cach, so we don't have to re-calculate them
+    // each time we need them.
+    lst.foreach ((ii) => {
+      mask_cache.insert (ii, ii.generate_mask ());
+    });
+    
+    
     return false;
   }
   
-  public void set_8 (ref uint8 field_id, string type_name, uint8 data) {
+  public void set (ref uint16 data,
+                   string type_name,
+                   int field_id,
+                   uint16 in_data) {
+    
+    var tt = list_of_types.lookup (type_name);
+    if (tt == null) {
+      GLib.critical ("Name \"%s\" dose not exist among the types valid types.",
+                     type_name);
+      return;
+    }
+    var fi = tt.get_field_info (field_id);
+    uint16 mask = mask_cache.lookup (fi);
+    uint16 invert_mask = ~mask;
+    uint16 tmp = data & invert_mask; // everything exept the field.
+    
+    uint16 tmp_mask = 1;
+    for (uint8 i = 0; i < fi.length; i++) {
+      tmp_mask <<= 1;
+      tmp_mask += 1;
+    }
+    
+    uint16 tmp2 = in_data & tmp_mask;
     
     
+    uint16 distance = 15 - fi.end;
     
+    
+    tmp2 = tmp2 << distance;
+    
+    
+    tmp2 = tmp2 | tmp;
+    
+    data = tmp2;
   }
   
+  public uint16 get (uint16 data,
+                     string type_name,
+                     int field_id) {
+    
+    var fi = list_of_types.lookup (type_name).get_field_info (field_id);
+    uint16 mask = mask_cache.lookup (fi);
+    uint16 tmp = data & mask; // only what is in the field.
+    
+    
+    uint16 distance = 15 - fi.end;
+    
+    
+    tmp = tmp >> distance;
+    return tmp;
+  }
+  
+  Type? get_type (string name) {
+    return list_of_types.lookup (name);
+  } 
+  
+  /**
+   * Create a new FieldInfo using the following syntax:
+   * {{{
+   * }}}
+   * 
+   */
   public struct FieldInfo {
-    uint8 field_id;
+    int field_id;
     uint8 start;
     uint8 end;
     uint8 length;
+    GLib.pointer padding;
+    
+    public FieldInfo (int field_id, uint8 start, uint8 end, uint8 length) {
+      this.field_id = field_id;
+      this.start = start;
+      this.end = end;
+      this.length = length; 
+      this.padding = null;
+    }
     
     public int compare (FieldInfo other) {
       if (this.field_id != other.field_id) {
-        return other.field_id - this.field_id; 
+        return  this.field_id - other.field_id; 
       } else if (this.start != other.start) {
-        return other.start - this.start;
+        return  this.start - other.start;
       } else if (this.end != other.end) {
-        return other.end - this.end;
+        return this.end - other.end;
       } else if (this.length != other.length) {
-        return other.length - this.length;
+        return this.length - other.length;
       }
       
       #if 0
@@ -130,7 +234,9 @@ namespace BitField {
     
     
     public string to_string () {
-      return "start: %i, end: %i, length: %i".printf (this.start,
+      return "field_id: %i start: %i, end: %i, length: %i".printf (
+                                                      this.field_id,
+                                                      this.start,
                                                       this.end,
                                                       this.length);
     }
@@ -139,10 +245,8 @@ namespace BitField {
      * returns true on error;
      */
     public bool validate () {
-      var distance = this.start - this.end;
+      var distance = this.end - this.start + 1;
       if (distance < 1 || distance != this.length) {
-        GLib.critical ("Validtion if FieldInfo object failed: (%s)",
-                       this.to_string ());
         return true;
       }
       return false;
@@ -154,11 +258,12 @@ namespace BitField {
     public uint16 generate_mask () {
       uint16 mask = 0;
       for (size_t i = 0; i < this.length; i++) {
+        mask >>= 1; // shit it over to the right one.
         mask += 0x8000; // set the left-most bit in the field
-        mask >> 1; // shit it over to the right one.
       }
       
-      mask >> this.start;
+      // Shift over the mask to where it should start.
+      mask >>= this.start; 
       
       return mask;
     }
@@ -167,11 +272,14 @@ namespace BitField {
     public extern static uint16 static_generate_mask (FieldInfo info);
   }
   
-  private struct Type {
+  public struct Type {
     FieldInfo[] fields;
     
     Type () {
         fields = new FieldInfo[16];
+        for (uint8 i = 0; i < 16; i++) {
+          fields[i] = {255,255,255,255};
+        }
     }
     
     public string to_string () {
@@ -188,9 +296,20 @@ namespace BitField {
       sb.append (")\n");
       return sb.str;
     }
+    
+    public FieldInfo get_field_info (int field_id) {
+      
+      FieldInfo ii = {0};
+      
+      foreach (FieldInfo ij in fields) {
+        if (ij.field_id == field_id) {
+          ii = ij;
+        }
+      }
+      
+      return ii;
+    }
+    
   }
-  
-  
-  
   
 }

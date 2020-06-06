@@ -1,16 +1,67 @@
-/*
- * The basic concept of a bitmap is to provide some kind of siple storrage of
- * information, that should not take too much space.
- *
- * The basic way of doing this is using something like uint8 or uint16,
- * which provides us with up to 8 and 16 fields respectivly, with the simplest
- * field being 1 bit, up to the one-field type having the full 8bit (256 value)
- * or 16bit (65535 value) to work with in one field.
- *
- * When defining a bitmap type you need to consider what fields you need, how
- * many values each feald sholud have and how they corrolate to your data.
- *
- * Lits take the examlpe of a simple game map, where you have information like
- * if a tile is travelsable or if only cetain
- *
- */
+BitField,
+manage bit fields in vala without going insane.
+(c) Gustav Hartvigsson 2020
+
+
+CONCEPT:
+
+The basic concept of a bitfield is to provide some kind of siple storrage of
+information, that should not take too much space.
+
+The basic way of doing this is using something like uint8 or uint16,
+which provides us with up to 8 and 16 fields respectivly, with the simplest
+field being 1 bit, up to the one-field type having the full 8bit (256 value)
+or 16bit (65535 values) to work with in one field.
+
+When defining a bitfiled type you need to consider what fields you need, how
+many values each feald sholud have and how they corrolate to your data.
+
+lets take the examlpe of a simple game map, where you have information like
+if a tile is travelsable or if only cetain types of units can move over them.
+
+If we have land units and water units, we could represet that with as little as
+2 bits:
+ * 00 - Not traverable,
+ * 01 - travelable by land units,
+ * 10 - travelable by sea units.
+ * 11 - traverable by both types of units.
+
+That means that we have 14 bits left if we use a 16 bit value, or 6 bits left
+if we use an 8 bit value.
+
+For the sake of argument, we are going to be using an 8 bit value in the
+example below.
+
+  Tile [0][0][0][0][0][0][0][0]
+        ^--^  ^--^  ^--------^
+        trav  Tile     Tile
+              Set      Texture
+
+Legend:
+ * Trav         - What sort of traversal is posible on the tile.
+ * Tile Set     - You four tile sets, you cound switch between them here.
+ * Tile Texture - The specific tile texture in the tile set you want to have
+                  on this tile.
+
+Since each tile on the map is only one 8 bit value, instead of multi byte
+data structures, you will save on memory.
+
+The nivé solution would be to use a struct or each tile and have the information
+stored in seral bytes and store that in an array, but that would take up 3 times
+as much space, or more if you use other types.
+
+struct foo {
+  uint8 traversable;
+  uint8 tile_set;
+  uint8 texture;
+}
+
+USAGE:
+
+For basic usage see the example in main.vala.
+
+C HowTo:
+int main (int argc, char * argv[]) {
+  // TODO
+}
+
