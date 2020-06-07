@@ -47,6 +47,10 @@ namespace BitField {
     
     FieldInfo[] lst2 = new FieldInfo[lst.length ()];
     
+    for (uint i = 0; i < lst.length (); i++) {
+      lst2[i] = lst.nth_data (i);
+    }
+    
     add_type (name, lst2);
     
     return false;
