@@ -226,7 +226,8 @@ namespace BitField {
     }
     
     [CCode (cname = "bit_field_field_info_compare")]
-    public static extern int static_campare (FieldInfo a, FieldInfo b);
+    public static extern int static_compare (FieldInfo a, FieldInfo b);
+    
     
     
     public bool overlap (FieldInfo other) {
@@ -234,7 +235,7 @@ namespace BitField {
     }
     
     [CCode (cname = "bit_field_field_info_overlap")]
-    public static extern int static_overlap (FieldInfo a, FieldInfo b);
+    public static extern bool static_overlap (FieldInfo a, FieldInfo b);
     
     
     public string to_string () {

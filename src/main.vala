@@ -23,6 +23,14 @@ int main (string[] args) {
   uint16 t2 = BitField.get (t1 ,"foo", TestFields.C);
   print ("%i\n", t2);
   
+
+  var my_var1 = BitField.FieldInfo.static_overlap (info[0], info[1]);
+  
+  var my_var2 = BitField.FieldInfo.static_compare (info[0], info[1]);
+
+  stdout.printf ("%s\n", my_var1.to_string ());
+  stdout.printf ("%s\n", my_var2.to_string ());
+  
   BitField.deinit ();
   return 0;
 }
