@@ -29,7 +29,6 @@ namespace BitField {
   public void deinit () {
     list_of_types.foreach ((_key, _val) => {
       list_of_types.remove (_key);
-      
       return false;
     });
   }
@@ -171,6 +170,21 @@ namespace BitField {
   /**
    * Create a new FieldInfo using the following syntax:
    * {{{
+   *  enum MyTypeFields {
+   *    F1,
+   *    F2,
+   *    //....
+   *  }
+   *
+   *  BitField.FieldInfo[] my_fields_info = {
+   *    BitField.FieldInfo (MyTypeFields.F1, 0, 5, 6),
+   *    BitField.FieldInfo (MyTypeFields.F2, 0, 5, 6),
+   *    //.....
+   *  }
+   *  
+   *  if (FieldInfo.add_type ("MyType", my_fields_info)) {
+   *    stderr.printf ("Something went wrong!");
+   *  }
    * }}}
    * 
    */
@@ -198,26 +212,6 @@ namespace BitField {
       } else if (this.length != other.length) {
         return this.length - other.length;
       }
-      
-      #if 0
-      if (this.start > other.start) {
-        return -1;
-      } else if (this.start < other.start) {
-        return 1;
-      } else {
-        if (this.end > other.end) {
-          return -1;
-        } else if (this.end < other.end) {
-          return 1;
-        } else {
-          if (this.length > other.length) {
-            return -1;
-          } else if (this.length < other.length) {
-            return 1;
-          }
-        }
-      }
-      #endif
       
       return 0;
     }
