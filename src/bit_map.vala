@@ -16,7 +16,7 @@ namespace BitField {
   
   private static GLib.Tree<FieldInfo?, uint16> mask_cache;
   
-  void init () {
+  public void init () {
     list_of_types = new GLib.Tree<string, Type?> ((a, b) => {
       return (GLib.strcmp (a,b));
     });
@@ -26,7 +26,7 @@ namespace BitField {
     });
   }
   
-  void deinit () {
+  public void deinit () {
     list_of_types.foreach ((_key, _val) => {
       list_of_types.remove (_key);
       
@@ -34,7 +34,7 @@ namespace BitField {
     });
   }
   
-  static bool add_type_v (string name, FieldInfo first_field, ...) {
+  public static bool add_type_v (string name, FieldInfo first_field, ...) {
     var va = va_list ();
     
     GLib.List<FieldInfo?> lst = new GLib.List<FieldInfo?> ();
@@ -179,14 +179,12 @@ namespace BitField {
     uint8 start;
     uint8 end;
     uint8 length;
-    GLib.pointer padding;
     
     public FieldInfo (int field_id, uint8 start, uint8 end, uint8 length) {
       this.field_id = field_id;
       this.start = start;
       this.end = end;
       this.length = length; 
-      this.padding = null;
     }
     
     public int compare (FieldInfo other) {

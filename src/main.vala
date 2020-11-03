@@ -19,10 +19,19 @@ int main (string[] args) {
   uint16 t1 = 0;
   BitField.set (ref t1, "foo", TestFields.C, 137);
   print ("%i\n", t1);
-  
+
+  BitField.set (ref t1, "foo", TestFields.B, 3);
+  print ("%i\n", t1);
+
+  BitField.set (ref t1, "foo", TestFields.A, 7);
+  print ("%i\n", t1);
+
   uint16 t2 = BitField.get (t1 ,"foo", TestFields.C);
-  print ("%i\n", t2);
-  
+  print ("C: %i\n", t2);
+  t2 = BitField.get (t1 ,"foo", TestFields.B);
+  print ("B: %i\n", t2);
+  t2 = BitField.get (t1 ,"foo", TestFields.A);
+  print ("A: %i\n", t2);
 
   var my_var1 = BitField.FieldInfo.static_overlap (info[0], info[1]);
   

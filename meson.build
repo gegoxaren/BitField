@@ -15,3 +15,11 @@ dependencies += [dep_glib, dep_gobject]
 subdir('src')
 
 executable ('main', source_files, dependencies: dependencies)
+
+vbitfield = shared_library ('vbitfield',
+  lvbitfiled_sources,
+  dependencies: dependencies)
+
+executable ('c_main', c_sources,  
+  dependencies : dependencies,
+  link_with : vbitfield)
