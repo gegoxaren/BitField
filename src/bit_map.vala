@@ -50,10 +50,8 @@ namespace BitField {
     for (uint i = 0; i < lst.length (); i++) {
       lst2[i] = lst.nth_data (i);
     }
-    
-    add_type (name, lst2);
-    
-    return false;
+   
+    return add_type (name, lst2);
   }
   
   /**
