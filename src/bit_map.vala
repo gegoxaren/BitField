@@ -174,6 +174,7 @@ namespace BitField {
    * }}}
    * 
    */
+  [CCode (cprefix="bit_field_info_", cname="BitFieldInfo")]
   public struct FieldInfo {
     int field_id;
     uint8 start;
@@ -221,7 +222,7 @@ namespace BitField {
       return 0;
     }
     
-    [CCode (cname = "bit_field_field_info_compare")]
+    [CCode (cname = "bit_field_info_compare")]
     public static extern int static_compare (FieldInfo a, FieldInfo b);
     
     
@@ -230,7 +231,7 @@ namespace BitField {
       return (!((this.start < other.end) || (this.end > other.start)));
     }
     
-    [CCode (cname = "bit_field_field_info_overlap")]
+    [CCode (cname = "bit_field_info_overlap")]
     public static extern bool static_overlap (FieldInfo a, FieldInfo b);
     
     
@@ -253,7 +254,7 @@ namespace BitField {
       return false;
     }
     
-    [CCode (cname = "bit_field_field_info_validate")]
+    [CCode (cname = "bit_field_info_validate")]
     public extern static bool static_validate (FieldInfo info);
     
     public uint16 generate_mask () {
@@ -269,7 +270,7 @@ namespace BitField {
       return mask;
     }
     
-    [CCode (cname = "bit_field_field_generate_mask")]
+    [CCode (cname = "bit_field_info_generate_mask")]
     public extern static uint16 static_generate_mask (FieldInfo info);
   }
   

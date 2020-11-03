@@ -13,7 +13,7 @@ int
 main (int argc, char ** argv) {
   bit_field_init ();
   
-  BitFieldFieldInfo info[] = {
+  BitFieldInfo info[] = {
     {FOO_A, 0, 5, 6},
     {FOO_B, 6, 7, 2},
     {FOO_C, 8, 15, 8},
