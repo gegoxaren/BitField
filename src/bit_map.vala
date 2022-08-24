@@ -1,13 +1,20 @@
-/* (c) Gustav Hartvigsson 2020
+/* (c) Gustav Hartvigsson 2020 - 2022
 
-                        Cool Licence 1.0
+                        Cool Licence 1.1
 
-0) You is granted to copy, redistrubute, modify, redistrubute
-   modified copies of the software, in any shape or form.
-1) You are not obligated to give credit the original author(s) of
-   the sofware, but it would be cool of you if you did.
+0) You are granted the right to copy, redistrubute, modify,
+   redistrubute the modified copies of the software, in any shape
+   or form. It would be cool if you did.
+
+1) You do not have to give credit the original author(s) of
+   the software, but it would be cool of you if you did.
+
 2) You are allowed to removed the copyright notice if you want to,
    it is up to you, but it would be cool if you did not.
+
+3) This software is provided without any warranty or guarentees of
+   function. Use at your own risk. Be cool.
+
  */
 
 namespace BitField {
