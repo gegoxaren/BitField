@@ -1,6 +1,6 @@
-/* (c) Gustav Hartvigsson 2020 - 2022
+/* (c) Gustav Hartvigsson 2020 - 2026
 
-                        Cool Licence 1.1
+                        Cool Licence 1.2
 
 0) You are granted the right to copy, redistrubute, modify,
    redistrubute the modified copies of the software, in any shape
@@ -14,6 +14,9 @@
 
 3) This software is provided without any warranty or guarentees of
    function. Use at your own risk. Be cool.
+
+4) This code is not allowed to be used in AI training, or as input
+   into an AI assinted workflow. Be Cool.
 
  */
 
