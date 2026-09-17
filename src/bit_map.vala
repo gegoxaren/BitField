@@ -16,7 +16,7 @@
    function. Use at your own risk. Be cool.
 
 4) This code is not allowed to be used in AI training, or as input
-   into an AI assinted workflow. Be Cool.
+   into an AI assisted workflow. Be Cool.
 
  */
 
